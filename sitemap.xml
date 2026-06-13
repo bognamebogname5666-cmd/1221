@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
+        xmlns:xhtml="http://www.w3.org/1999/xhtml"
+        xmlns:image="http://www.google.com/schemas/sitemap-image/1.1">
+
+  <!-- Main entry point -->
+  <url>
+    <loc>https://nexus-blocks.app/</loc>
+    <lastmod>2025-05-17</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>1.0</priority>
+    <xhtml:link rel="alternate" hreflang="en" href="https://nexus-blocks.app/"/>
+    <image:image>
+      <image:loc>https://nexus-blocks.app/icons/icon-512.png</image:loc>
+      <image:title>NEXUS BLOCKS — Block puzzle game</image:title>
+    </image:image>
+  </url>
+
+  <!-- Classic mode deep link -->
+  <url>
+    <loc>https://nexus-blocks.app/?mode=classic_endless</loc>
+    <lastmod>2025-05-17</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+
+  <!-- Puzzle mode deep link -->
+  <url>
+    <loc>https://nexus-blocks.app/?mode=puzzle_challenge</loc>
+    <lastmod>2025-05-17</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+
+  <!-- Rush mode deep link -->
+  <url>
+    <loc>https://nexus-blocks.app/?mode=time_rush</loc>
+    <lastmod>2025-05-17</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+
+</urlset>

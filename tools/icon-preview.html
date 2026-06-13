@@ -1,0 +1,334 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>NEXUS BLOCKS — Icon Generator</title>
+  <style>
+    /* Icon generator tool — styles are standalone, NOT from styles.css */
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      background: #0A0A0F; color: #F4F4F6;
+      font-family: system-ui, sans-serif; padding: 24px;
+    }
+    h1 { font-size: 1.4rem; margin-bottom: 6px; color: #6600FF; }
+    p  { font-size: .85rem; color: #8E8E9F; margin-bottom: 20px; }
+    #controls { display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 20px; }
+    button {
+      padding: 10px 20px; border-radius: 8px; border: 1px solid #6600FF;
+      background: rgba(102,0,255,.15); color: #F4F4F6;
+      font-size: .82rem; font-weight: 600; cursor: pointer;
+    }
+    button:hover { background: rgba(102,0,255,.3); }
+    #grid {
+      display: flex; flex-wrap: wrap; gap: 12px;
+    }
+    .icon-card {
+      display: flex; flex-direction: column; align-items: center;
+      gap: 6px;
+    }
+    .icon-card canvas {
+      border: 1px solid rgba(102,0,255,.3);
+      border-radius: 8px;
+    }
+    .icon-card span {
+      font-size: .68rem; color: #8E8E9F;
+    }
+    a.dl-link {
+      font-size: .68rem; color: #00C8FF; text-decoration: none;
+      padding: 2px 8px; border: 1px solid rgba(0,200,255,.3);
+      border-radius: 4px; background: rgba(0,200,255,.06);
+    }
+    #status {
+      margin-top: 16px; font-size: .82rem; color: #8E8E9F;
+    }
+  </style>
+</head>
+<body>
+  <h1>NEXUS BLOCKS — Icon Generator</h1>
+  <p>
+    Opens in browser. Draws the icon at every required size and provides
+    individual download links. Save each PNG to <code>icons/icon-{size}.png</code>.
+  </p>
+
+  <div id="controls">
+    <button id="btn-gen">Generate All Icons</button>
+    <button id="btn-dl-all">Download All as ZIP</button>
+  </div>
+
+  <div id="grid"></div>
+  <p id="status">Click "Generate All Icons" to start.</p>
+
+  <script>
+  'use strict';
+
+  // ── All required sizes ─────────────────────────────────────────────────────
+  const SIZES = [16, 32, 48, 72, 96, 128, 144, 152, 180, 192, 512];
+  const MASKABLE_SIZES = [192, 512];
+  const SHORTCUT_NAMES = ['classic', 'puzzle', 'rush'];
+  const SHORTCUT_ICONS = {
+    classic: { symbol: '■', color: '#00C8FF' },
+    puzzle:  { symbol: '✦', color: '#9933FF' },
+    rush:    { symbol: '⚡', color: '#FF7700' },
+  };
+
+  // ── Draw the NEXUS N icon on a canvas ──────────────────────────────────────
+  function drawIcon(canvas, size, maskable = false) {
+    const ctx  = canvas.getContext('2d');
+    const dpr  = 1;
+    canvas.width  = size;
+    canvas.height = size;
+
+    const pad = maskable ? size * 0.12 : 0;  // safe-zone padding for maskable
+
+    // Background
+    const bgGrad = ctx.createRadialGradient(
+      size * 0.5, size * 0.42, 0,
+      size * 0.5, size * 0.5,  size * 0.7
+    );
+    bgGrad.addColorStop(0,   '#16082e');
+    bgGrad.addColorStop(1,   '#0A0A0F');
+
+    if (maskable) {
+      // Maskable: full-bleed square (no rounded corners — OS applies mask)
+      ctx.fillStyle = bgGrad;
+      ctx.fillRect(0, 0, size, size);
+    } else {
+      // Regular: rounded rectangle
+      const r = size * 0.1875;
+      ctx.beginPath();
+      ctx.moveTo(r, 0);
+      ctx.lineTo(size - r, 0);
+      ctx.quadraticCurveTo(size, 0, size, r);
+      ctx.lineTo(size, size - r);
+      ctx.quadraticCurveTo(size, size, size - r, size);
+      ctx.lineTo(r, size);
+      ctx.quadraticCurveTo(0, size, 0, size - r);
+      ctx.lineTo(0, r);
+      ctx.quadraticCurveTo(0, 0, r, 0);
+      ctx.closePath();
+      ctx.fillStyle = bgGrad;
+      ctx.fill();
+    }
+
+    // Draw grid dots at corners (only at size >= 48)
+    if (size >= 48) {
+      const dotRadius = Math.max(1.5, size * 0.01);
+      const dotOffset = size * 0.14;
+      const dotStep   = size * 0.09;
+      const dots = [
+        [dotOffset, dotOffset], [dotOffset + dotStep, dotOffset],
+        [dotOffset, dotOffset + dotStep],
+        [size - dotOffset, dotOffset], [size - dotOffset - dotStep, dotOffset],
+        [size - dotOffset, dotOffset + dotStep],
+        [dotOffset, size - dotOffset], [dotOffset, size - dotOffset - dotStep],
+        [dotOffset + dotStep, size - dotOffset],
+        [size - dotOffset, size - dotOffset], [size - dotOffset - dotStep, size - dotOffset],
+        [size - dotOffset, size - dotOffset - dotStep],
+      ];
+      ctx.fillStyle = 'rgba(102, 0, 255, 0.22)';
+      dots.forEach(([x, y]) => {
+        ctx.beginPath();
+        ctx.arc(x, y, dotRadius, 0, Math.PI * 2);
+        ctx.fill();
+      });
+    }
+
+    // N letter strokes
+    const nGrad = ctx.createLinearGradient(pad, pad, size - pad, size - pad);
+    nGrad.addColorStop(0,    '#9933FF');
+    nGrad.addColorStop(0.5,  '#6600FF');
+    nGrad.addColorStop(1,    '#00C8FF');
+
+    const lx   = size * 0.211 + pad * 0.5;  // left x
+    const rx   = size * 0.789 - pad * 0.5;  // right x
+    const top  = size * 0.219 + pad * 0.5;  // top y
+    const bot  = size * 0.781 - pad * 0.5;  // bottom y
+    const sw   = Math.max(2, size * 0.16);  // stroke width
+
+    ctx.strokeStyle = nGrad;
+    ctx.lineWidth   = sw;
+    ctx.lineCap     = 'round';
+    ctx.lineJoin    = 'round';
+
+    // Glow pass
+    ctx.shadowColor  = '#6600FF';
+    ctx.shadowBlur   = sw * 0.8;
+
+    // Left vertical
+    ctx.beginPath();
+    ctx.moveTo(lx, top);
+    ctx.lineTo(lx, bot);
+    ctx.stroke();
+
+    // Diagonal
+    ctx.beginPath();
+    ctx.moveTo(lx, top);
+    ctx.lineTo(rx, bot);
+    ctx.stroke();
+
+    // Right vertical
+    ctx.beginPath();
+    ctx.moveTo(rx, top);
+    ctx.lineTo(rx, bot);
+    ctx.stroke();
+
+    ctx.shadowBlur = 0;
+
+    // Accent caps (top/bottom of verticals)
+    if (size >= 32) {
+      const capH = Math.max(1.5, size * 0.023);
+      ctx.fillStyle = 'rgba(0, 200, 255, 0.6)';
+      ctx.fillRect(lx - sw / 2, top - capH / 2, sw, capH);
+      ctx.fillRect(lx - sw / 2, bot - capH / 2, sw, capH);
+      ctx.fillRect(rx - sw / 2, top - capH / 2, sw, capH);
+      ctx.fillRect(rx - sw / 2, bot - capH / 2, sw, capH);
+    }
+
+    // Bottom scan line
+    if (size >= 64) {
+      const scanY = size * 0.883;
+      const scanH = Math.max(1.5, size * 0.009);
+      const scanG = ctx.createLinearGradient(size * 0.12, 0, size * 0.88, 0);
+      scanG.addColorStop(0,   'rgba(102,0,255,0)');
+      scanG.addColorStop(0.5, 'rgba(102,0,255,0.55)');
+      scanG.addColorStop(1,   'rgba(102,0,255,0)');
+      ctx.fillStyle = scanG;
+      ctx.fillRect(size * 0.12, scanY, size * 0.76, scanH);
+    }
+  }
+
+  // ── Draw shortcut icon ─────────────────────────────────────────────────────
+  function drawShortcut(canvas, size, name) {
+    const cfg = SHORTCUT_ICONS[name] || { symbol: '?', color: '#6600FF' };
+    const ctx = canvas.getContext('2d');
+    canvas.width  = size;
+    canvas.height = size;
+
+    // Background
+    const r = size * 0.19;
+    ctx.beginPath();
+    ctx.moveTo(r, 0);
+    ctx.lineTo(size - r, 0);
+    ctx.quadraticCurveTo(size, 0, size, r);
+    ctx.lineTo(size, size - r);
+    ctx.quadraticCurveTo(size, size, size - r, size);
+    ctx.lineTo(r, size);
+    ctx.quadraticCurveTo(0, size, 0, size - r);
+    ctx.lineTo(0, r);
+    ctx.quadraticCurveTo(0, 0, r, 0);
+    ctx.closePath();
+    ctx.fillStyle = '#0A0A0F';
+    ctx.fill();
+
+    // Symbol
+    ctx.fillStyle   = cfg.color;
+    ctx.font        = `900 ${size * 0.5}px system-ui, sans-serif`;
+    ctx.textAlign   = 'center';
+    ctx.textBaseline = 'middle';
+    ctx.shadowColor  = cfg.color;
+    ctx.shadowBlur   = size * 0.1;
+    ctx.fillText(cfg.symbol, size / 2, size / 2);
+  }
+
+  // ── Render icons ──────────────────────────────────────────────────────────
+  function generateAll() {
+    const grid = document.getElementById('grid');
+    grid.innerHTML = '';
+    document.getElementById('status').textContent = 'Generating…';
+
+    const canvases = {};
+
+    // Regular icons
+    SIZES.forEach(size => {
+      const card  = document.createElement('div');
+      card.className = 'icon-card';
+      const cvs = document.createElement('canvas');
+      drawIcon(cvs, size, false);
+      const filename = `icon-${size}.png`;
+      const dl = makeDownloadLink(cvs, filename);
+      card.appendChild(cvs);
+      card.appendChild(document.createTextNode(`${size}px`));
+      card.appendChild(dl);
+      grid.appendChild(card);
+      canvases[filename] = cvs;
+    });
+
+    // Maskable icons
+    MASKABLE_SIZES.forEach(size => {
+      const card  = document.createElement('div');
+      card.className = 'icon-card';
+      const cvs = document.createElement('canvas');
+      drawIcon(cvs, size, true);
+      const filename = `maskable-${size}.png`;
+      const dl = makeDownloadLink(cvs, filename);
+      card.appendChild(cvs);
+      card.appendChild(document.createTextNode(`maskable-${size}px`));
+      card.appendChild(dl);
+      grid.appendChild(card);
+      canvases[filename] = cvs;
+    });
+
+    // Shortcut icons
+    SHORTCUT_NAMES.forEach(name => {
+      const card  = document.createElement('div');
+      card.className = 'icon-card';
+      const cvs = document.createElement('canvas');
+      drawShortcut(cvs, 96, name);
+      const filename = `shortcut-${name}.png`;
+      const dl = makeDownloadLink(cvs, filename);
+      card.appendChild(cvs);
+      card.appendChild(document.createTextNode(filename));
+      card.appendChild(dl);
+      grid.appendChild(card);
+      canvases[filename] = cvs;
+    });
+
+    document.getElementById('status').textContent =
+      `✅ Generated ${Object.keys(canvases).length} icons. Click each link to download, then save to icons/.`;
+
+    return canvases;
+  }
+
+  function makeDownloadLink(canvas, filename) {
+    const a = document.createElement('a');
+    a.className = 'dl-link';
+    a.textContent = 'Download';
+    a.download = filename;
+    canvas.toBlob(blob => {
+      a.href = URL.createObjectURL(blob);
+    });
+    return a;
+  }
+
+  // ── Download all as ZIP (using JSZip if available, else individual) ────────
+  async function downloadAll() {
+    const canvases = generateAll();
+
+    // Convert all to blobs
+    const items = await Promise.all(
+      Object.entries(canvases).map(async ([name, canvas]) => {
+        const blob = await new Promise(res => canvas.toBlob(res));
+        return { name, blob };
+      })
+    );
+
+    // Trigger individual downloads as fallback
+    for (const { name, blob } of items) {
+      const url = URL.createObjectURL(blob);
+      const a   = document.createElement('a');
+      a.href     = url;
+      a.download = name;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+      // Stagger downloads to avoid browser blocking
+      await new Promise(r => setTimeout(r, 100));
+    }
+  }
+
+  document.getElementById('btn-gen').addEventListener('click', generateAll);
+  document.getElementById('btn-dl-all').addEventListener('click', downloadAll);
+  </script>
+</body>
+</html>

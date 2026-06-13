@@ -1,0 +1,110 @@
+/*
+ * NEXUS BLOCKS — Global Design Tokens
+ * ─────────────────────────────────────────────────────────────────────────────
+ * Defines the two root-level tokens that all other style sheets depend on:
+ *   --color-primary  — electric violet brand accent
+ *   --color-bg       — deep-space application background
+ *
+ * nexus_visuals.css extends these with full component styles.
+ * Do NOT duplicate these two variables anywhere else in the project.
+ */
+
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+:root {
+  /* ── Brand Tokens (canonical source — consumed by nexus_visuals.css) ─── */
+  --color-primary : #6600FF;   /* Electric violet — buttons, borders, primary glows */
+  --color-bg      : #0A0A0F;   /* Deep-space black — canvas of the entire game      */
+
+  /* ── Layout ─────────────────────────────────────────────────────────── */
+  --board-cell-size : clamp(28px, 5.8vmin, 54px); /* Fluid cell — works on any screen */
+  --board-gap       : 2px;
+  --ui-radius       : 8px;
+  --ui-radius-lg    : 16px;
+
+  /* ── Z-index Stack ───────────────────────────────────────────────────── */
+  --z-board     : 10;
+  --z-hud       : 20;
+  --z-overlay   : 30;
+  --z-particles : 40;
+  --z-modal     : 50;
+  --z-toast     : 60;
+
+  /* ── Timing Shortcuts ────────────────────────────────────────────────── */
+  --t-fast   : 0.15s;
+  --t-normal : 0.3s;
+  --t-slow   : 0.6s;
+}
+
+/* ── Document Base ─────────────────────────────────────────────────────────── */
+
+html, body {
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  background-color: var(--color-bg);
+  -webkit-tap-highlight-color: transparent;
+  touch-action: none;
+  user-select: none;
+}
+
+/* ── App Root ──────────────────────────────────────────────────────────────── */
+
+#app {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* ── System Layers ─────────────────────────────────────────────────────────── */
+
+/* Canvas drawn behind everything — ambient hex-mesh background animation */
+#bg-canvas {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  opacity: 0.35;
+}
+
+/* DOM particle layer — sits above board, below overlays */
+#particle-layer {
+  position: fixed;
+  inset: 0;
+  z-index: var(--z-particles);
+  pointer-events: none;
+}
+
+/* ── Screen Container ──────────────────────────────────────────────────────── */
+
+.screen {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  visibility: hidden;            /* fully remove inactive screens from rendering */
+  pointer-events: none;
+  transition: opacity var(--t-normal) ease, visibility var(--t-normal) ease;
+}
+
+.screen.active {
+  opacity: 1;
+  visibility: visible;
+  pointer-events: all;
+}
+
+/* ── Accessibility ─────────────────────────────────────────────────────────── */
+
+:focus-visible {
+  outline: 2px solid var(--color-primary);
+  outline-offset: 3px;
+}

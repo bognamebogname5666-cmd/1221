@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
+  <title>NEXUS BLOCKS — Offline</title>
+  <!-- Color tokens defined in styles.css — not redeclared here. -->
+  <!-- Inline critical styles use matching literal values as fallback. -->
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    html, body {
+      width: 100%; height: 100%;
+      overflow: hidden;
+      background: #0A0A0F;          /* matches --color-bg */
+      color: #F4F4F6;
+      font-family: 'Outfit', system-ui, sans-serif;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .offline-wrap {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 24px;
+      padding: 32px 24px;
+      text-align: center;
+      max-width: 360px;
+    }
+
+    .offline-icon {
+      width: 96px;
+      height: 96px;
+      border-radius: 22px;
+      overflow: hidden;
+      border: 1px solid rgba(102, 0, 255, 0.4);
+      box-shadow: 0 0 32px rgba(102, 0, 255, 0.3);
+    }
+    .offline-icon img { width: 100%; height: 100%; object-fit: cover; }
+
+    .offline-title {
+      font-size: clamp(1.6rem, 7vw, 2.4rem);
+      font-weight: 900;
+      letter-spacing: .1em;
+      line-height: 1;
+      color: #6600FF;               /* matches --color-primary */
+      text-shadow: 0 0 24px rgba(102,0,255,.6);
+    }
+
+    .offline-sub {
+      font-size: .9rem;
+      letter-spacing: .06em;
+      color: #8E8E9F;
+      line-height: 1.5;
+    }
+
+    .offline-hint {
+      font-size: .78rem;
+      color: rgba(142, 142, 159, 0.6);
+      border: 1px solid rgba(255,255,255,.07);
+      border-radius: 10px;
+      padding: 10px 16px;
+      line-height: 1.5;
+    }
+
+    .btn-retry {
+      padding: 14px 36px;
+      border-radius: 12px;
+      background: #6600FF;          /* matches --color-primary */
+      color: #fff;
+      font-family: inherit;
+      font-size: .82rem;
+      font-weight: 700;
+      letter-spacing: .14em;
+      text-transform: uppercase;
+      border: none;
+      cursor: pointer;
+      transition: filter .15s, transform .1s;
+    }
+    .btn-retry:hover  { filter: brightness(1.2); }
+    .btn-retry:active { transform: scale(.97); }
+
+    .signal-bars {
+      display: flex;
+      gap: 4px;
+      align-items: flex-end;
+      height: 24px;
+    }
+    .signal-bar {
+      width: 6px;
+      border-radius: 3px;
+      background: rgba(102, 0, 255, 0.25);
+      animation: signalPulse 1.8s ease-in-out infinite;
+    }
+    .signal-bar:nth-child(1) { height: 8px;  animation-delay: 0s; }
+    .signal-bar:nth-child(2) { height: 14px; animation-delay: .2s; }
+    .signal-bar:nth-child(3) { height: 20px; animation-delay: .4s; }
+    .signal-bar:nth-child(4) { height: 24px; animation-delay: .6s; }
+
+    @keyframes signalPulse {
+      0%,100% { opacity: .25; }
+      50%      { opacity: .7; }
+    }
+
+    .online-check {
+      font-size: .72rem;
+      letter-spacing: .12em;
+      text-transform: uppercase;
+      color: rgba(142, 142, 159, 0.5);
+    }
+  </style>
+</head>
+<body>
+  <div class="offline-wrap" role="main">
+
+    <div class="offline-icon">
+      <img src="/icons/icon-96.png"
+           alt="NEXUS BLOCKS"
+           width="96" height="96"
+           onerror="this.parentElement.innerHTML='<svg viewBox=&quot;0 0 96 96&quot; xmlns=&quot;http://www.w3.org/2000/svg&quot;><rect width=&quot;96&quot; height=&quot;96&quot; fill=&quot;%230A0A0F&quot;/><text x=&quot;50%&quot; y=&quot;55%&quot; text-anchor=&quot;middle&quot; dominant-baseline=&quot;middle&quot; font-family=&quot;system-ui&quot; font-size=&quot;48&quot; font-weight=&quot;900&quot; fill=&quot;%236600FF&quot;>N</text></svg>'" />
+    </div>
+
+    <h1 class="offline-title">NEXUS BLOCKS</h1>
+
+    <div class="signal-bars" aria-hidden="true">
+      <div class="signal-bar"></div>
+      <div class="signal-bar"></div>
+      <div class="signal-bar"></div>
+      <div class="signal-bar"></div>
+    </div>
+
+    <p class="offline-sub">
+      You're offline right now.<br />
+      The game needs to load once before it can be played offline.
+    </p>
+
+    <p class="offline-hint">
+      If you've played before, try refreshing.<br />
+      The service worker will serve the cached game.
+    </p>
+
+    <button class="btn-retry" id="btn-retry"
+            onclick="window.location.reload()">
+      Try Again
+    </button>
+
+    <p class="online-check" id="online-status" aria-live="polite">
+      Checking connection…
+    </p>
+
+  </div>
+
+  <script>
+    'use strict';
+
+    const statusEl = document.getElementById('online-status');
+
+    function updateStatus() {
+      if (navigator.onLine) {
+        statusEl.textContent = 'Back online — reloading…';
+        setTimeout(() => window.location.replace('/'), 800);
+      } else {
+        statusEl.textContent = 'Still offline';
+      }
+    }
+
+    window.addEventListener('online',  updateStatus);
+    window.addEventListener('offline', updateStatus);
+
+    // Periodic retry every 5 seconds
+    setInterval(() => {
+      if (navigator.onLine) updateStatus();
+    }, 5000);
+
+    updateStatus();
+  </script>
+</body>
+</html>

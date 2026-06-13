@@ -1,0 +1,82 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512">
+  <defs>
+    <!-- Background radial gradient: deep-space black core, slightly lighter edge -->
+    <radialGradient id="bgGrad" cx="50%" cy="42%" r="68%">
+      <stop offset="0%"   stop-color="#16082e"/>
+      <stop offset="100%" stop-color="#0A0A0F"/>
+    </radialGradient>
+
+    <!-- Primary gradient for the N strokes -->
+    <linearGradient id="nGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%"   stop-color="#9933FF"/>
+      <stop offset="50%"  stop-color="#6600FF"/>
+      <stop offset="100%" stop-color="#00C8FF"/>
+    </linearGradient>
+
+    <!-- Glow filter for the N -->
+    <filter id="nGlow" x="-30%" y="-30%" width="160%" height="160%">
+      <feGaussianBlur in="SourceGraphic" stdDeviation="10" result="blur"/>
+      <feMerge>
+        <feMergeNode in="blur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+
+    <!-- Subtle corner-dot glow -->
+    <filter id="dotGlow" x="-100%" y="-100%" width="300%" height="300%">
+      <feGaussianBlur in="SourceGraphic" stdDeviation="3" result="b"/>
+      <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+  </defs>
+
+  <!-- ── Background ───────────────────────────────────────────── -->
+  <rect width="512" height="512" rx="96" fill="url(#bgGrad)"/>
+
+  <!-- ── Subtle grid dots (suggest game board) ─────────────────── -->
+  <g fill="#6600FF" opacity="0.18" filter="url(#dotGlow)">
+    <!-- Top-left cluster -->
+    <circle cx="72"  cy="72"  r="5"/>
+    <circle cx="120" cy="72"  r="5"/>
+    <circle cx="72"  cy="120" r="5"/>
+    <!-- Top-right cluster -->
+    <circle cx="392" cy="72"  r="5"/>
+    <circle cx="440" cy="72"  r="5"/>
+    <circle cx="440" cy="120" r="5"/>
+    <!-- Bottom-left cluster -->
+    <circle cx="72"  cy="392" r="5"/>
+    <circle cx="72"  cy="440" r="5"/>
+    <circle cx="120" cy="440" r="5"/>
+    <!-- Bottom-right cluster -->
+    <circle cx="440" cy="392" r="5"/>
+    <circle cx="392" cy="440" r="5"/>
+    <circle cx="440" cy="440" r="5"/>
+  </g>
+
+  <!-- ── The Letter "N" — three thick strokes ───────────────────── -->
+  <!--
+    Geometry:
+      Left vertical:  x=108, y=112..400, stroke-width=80
+      Diagonal:       from (108,112) to (404,400)
+      Right vertical: x=404, y=112..400, stroke-width=80
+  -->
+  <g filter="url(#nGlow)" stroke="url(#nGrad)" stroke-linecap="round" stroke-linejoin="round" fill="none">
+    <!-- Left vertical -->
+    <line x1="108" y1="112" x2="108" y2="400" stroke-width="82"/>
+    <!-- Diagonal from top-left to bottom-right -->
+    <line x1="108" y1="112" x2="404" y2="400" stroke-width="82"/>
+    <!-- Right vertical -->
+    <line x1="404" y1="112" x2="404" y2="400" stroke-width="82"/>
+  </g>
+
+  <!-- ── Bright accent: top caps and bottom caps ────────────────── -->
+  <g fill="#00C8FF" opacity="0.55">
+    <rect x="68" y="106" width="80" height="12" rx="6"/>
+    <rect x="68" y="394" width="80" height="12" rx="6"/>
+    <rect x="364" y="106" width="80" height="12" rx="6"/>
+    <rect x="364" y="394" width="80" height="12" rx="6"/>
+  </g>
+
+  <!-- ── Bottom scan line ───────────────────────────────────────── -->
+  <rect x="80" y="452" width="352" height="5" rx="2.5" fill="#6600FF" opacity="0.5"/>
+  <rect x="140" y="452" width="232" height="5" rx="2.5" fill="#00C8FF" opacity="0.35"/>
+</svg>

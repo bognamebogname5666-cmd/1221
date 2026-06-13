@@ -1,0 +1,137 @@
+/*
+  NEXUS BLOCKS - Visual Identity CSS Specs
+  Note: --color-primary and --color-bg are already defined in styles.css and are omitted here.
+*/
+
+:root {
+  /* 1. COLOR SYSTEM (Core Palette) */
+  --color-secondary: #00F0FF;     /* Neon Cyan for Nexus Links */
+  --color-tertiary: #FF0055;      /* Laser Pink for warnings/errors */
+  --color-surface: rgba(20, 20, 30, 0.6); /* Frosted glass panel backgrounds */
+  --color-surface-hover: rgba(40, 40, 60, 0.8);
+  
+  /* Typography Colors */
+  --color-text-main: #F4F4F6;
+  --color-text-muted: #8E8E9F;
+
+  /* Block Colors: 8 Pieces (Light / Base / Shadow) */
+  --piece-1-base: #FF2A6D; --piece-1-light: #FF6B96; --piece-1-shadow: #8A002A; /* Crimson */
+  --piece-2-base: #05D9E8; --piece-2-light: #6AEEF6; --piece-2-shadow: #006B73; /* Cyan */
+  --piece-3-base: #FFC600; --piece-3-light: #FFE066; --piece-3-shadow: #8A6B00; /* Amber */
+  --piece-4-base: #01FF89; --piece-4-light: #6BFFB7; --piece-4-shadow: #008044; /* Emerald */
+  --piece-5-base: #B900FF; --piece-5-light: #D966FF; --piece-5-shadow: #5E0080; /* Violet */
+  --piece-6-base: #0055FF; --piece-6-light: #6699FF; --piece-6-shadow: #002280; /* Cobalt */
+  --piece-7-base: #FF7700; --piece-7-light: #FFAA66; --piece-7-shadow: #803B00; /* Orange */
+  --piece-8-base: #E0E0E0; --piece-8-light: #FFFFFF; --piece-8-shadow: #707070; /* Prism/White */
+
+  /* Accents / Highlights */
+  --accent-combo: #FFD700;
+  --accent-nexus: #00F0FF;
+  --accent-danger: #FF2A6D;
+
+  /* Typography */
+  --font-display: 'Outfit', sans-serif;
+  --font-body: 'Inter', sans-serif;
+}
+
+/* 2. VISUAL STYLE - UI / UX Guide */
+body {
+  font-family: var(--font-body);
+  color: var(--color-text-main);
+}
+
+h1, h2, .score-display {
+  font-family: var(--font-display);
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+
+/* Base Block Styling (Quantum Glass Aesthetic) */
+.block {
+  background: radial-gradient(circle at 30% 30%, var(--cell-color-light), var(--cell-color-base) 60%, var(--cell-color-shadow) 100%);
+  border: 1px solid rgba(255, 255, 255, 0.4);
+  border-radius: 4px; /* Slightly rounded inner corners */
+  box-shadow: inset 0 0 10px rgba(255,255,255,0.2), 0 4px 8px rgba(0,0,0,0.5);
+  backdrop-filter: blur(4px);
+}
+
+.block::after {
+  content: '';
+  position: absolute;
+  top: 10%; left: 10%;
+  width: 30%; height: 30%;
+  background: rgba(255,255,255,0.8);
+  border-radius: 50%;
+  filter: blur(2px);
+}
+
+/* Buttons */
+.btn-primary {
+  background: var(--color-surface);
+  border: 2px solid var(--color-primary, #6600FF);
+  border-radius: 8px;
+  color: var(--color-text-main);
+  font-family: var(--font-display);
+  transition: all 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  backdrop-filter: blur(10px);
+}
+
+.btn-primary:hover {
+  background: var(--color-surface-hover);
+  border-color: var(--color-secondary);
+  box-shadow: 0 0 15px var(--color-secondary);
+  transform: translateY(-2px);
+}
+
+/* Modals */
+.modal-overlay {
+  background: rgba(10, 10, 15, 0.8);
+  backdrop-filter: blur(8px);
+}
+
+/* 3. ANIMATION LANGUAGE */
+.anim-piece-place {
+  animation: piecePlace 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+}
+
+@keyframes piecePlace {
+  0% { transform: scale(1.15); filter: brightness(1.5); }
+  50% { transform: scale(0.95); filter: brightness(1); }
+  100% { transform: scale(1); filter: brightness(1); }
+}
+
+.anim-line-clear {
+  transform-origin: center;
+  animation: lineClear 0.4s ease-out forwards;
+}
+
+@keyframes lineClear {
+  0% { 
+    transform: scale(1) translateY(0); 
+    opacity: 1; 
+    filter: brightness(2) contrast(1.5); 
+    box-shadow: 0 0 10px var(--color-primary, #FFF);
+  }
+  30% { 
+    transform: scale(1.1) translateY(-2px); 
+    filter: brightness(3); 
+    box-shadow: 0 0 25px var(--color-secondary);
+  }
+  100% { 
+    transform: scaleY(0.1) scaleX(1.5); 
+    opacity: 0; 
+    filter: brightness(1); 
+  }
+}
+
+.anim-level-up {
+  animation: levelUpBurst 1s ease-out;
+}
+
+@keyframes levelUpBurst {
+  0% { transform: scale(0.8); opacity: 0; }
+  20% { transform: scale(1.2); opacity: 1; filter: drop-shadow(0 0 20px var(--accent-combo)); }
+  80% { transform: scale(1); opacity: 1; filter: drop-shadow(0 0 10px var(--accent-combo)); }
+  100% { transform: scale(1); opacity: 1; filter: drop-shadow(0 0 0px transparent); }
+}

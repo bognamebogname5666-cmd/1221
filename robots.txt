@@ -1,0 +1,14 @@
+# robots.txt — NEXUS BLOCKS
+# https://nexus-blocks.app/
+
+User-agent: *
+Allow: /
+Disallow: /api/
+Disallow: /icons/generate.html
+Disallow: /src/ai/
+
+# Sitemap location
+Sitemap: https://nexus-blocks.app/sitemap.xml
+
+# Crawl-delay: be polite
+Crawl-delay: 10

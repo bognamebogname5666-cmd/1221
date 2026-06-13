@@ -1,0 +1,552 @@
+{
+  "document_info": {
+    "title": "NEXUS BLOCKS - Game Design Document",
+    "version": "1.0",
+    "date": "2026-05-17",
+    "author": "Senior Game Designer",
+    "status": "Draft"
+  },
+
+  "overview": {
+    "game_title": "NEXUS BLOCKS",
+    "genre": "Block Puzzle / Strategy",
+    "platform": ["Mobile (iOS/Android)", "Web Browser"],
+    "target_audience": "Casual to mid-core players, ages 12+",
+    "session_length": "2-10 minutes",
+    "art_style": "Minimalist neon-geometric with smooth particle effects",
+    "core_pitch": "A grid-based block puzzle where players place custom polyomino pieces to clear lines, but with two genre-defining twists: NEXUS LINKS (connected block chains that trigger cascading explosions across non-adjacent lines) and GRAVITY SHIFT (rotating the board's gravity direction mid-game to reshape the playing field).",
+
+    "unique_mechanics": [
+      {
+        "name": "NEXUS LINKS",
+        "description": "Certain blocks have colored energy connectors on their edges. When two or more matching connectors touch (even diagonally), they form a Nexus Link. Clearing any line containing a linked block also destroys ALL other blocks in that link chain, regardless of their position on the board. This creates explosive chain reactions across the entire grid and rewards strategic placement of linked pieces."
+      },
+      {
+        "name": "GRAVITY SHIFT",
+        "description": "Every 30 seconds (or on-demand via a charged ability), the player can rotate the board's gravity 90 degrees (left, right, or flip). All unsupported blocks fall in the new gravity direction, potentially completing new lines and triggering cascading clears. This adds a spatial reasoning layer completely absent from traditional block puzzlers."
+      }
+    ],
+
+    "grid_specifications": {
+      "default_size": "9x9",
+      "classic_mode_size": "9x9",
+      "puzzle_mode_size": "varies (7x7 to 11x11)",
+      "time_rush_size": "8x8",
+      "cell_states": ["empty", "filled", "linked", "special", "frozen", "cracked"]
+    }
+  },
+
+  "modes": [
+    {
+      "mode_id": "classic_endless",
+      "name": "Classic Endless",
+      "subtitle": "Survive the Grid",
+      "description": "Place pieces on a 9x9 grid to clear full rows and columns. The game ends when no available piece can be placed. No time pressure — pure strategy.",
+      "rules": [
+        "Player receives 3 random pieces at a time in a tray",
+        "All 3 must be placed before a new set of 3 is drawn",
+        "Clearing a full row OR column removes those blocks and awards points",
+        "Nexus Links activate when lines containing linked blocks are cleared",
+        "Gravity Shift charges every 45 seconds; player can activate it at will",
+        "Game ends when any piece in the current tray cannot fit on the board"
+      ],
+      "win_condition": "Survive as long as possible; maximize score",
+      "scoring": {
+        "single_line": 100,
+        "double_line": 300,
+        "triple_line": 600,
+        "quad_line_or_more": 1000,
+        "nexus_link_bonus": "+150 per linked block destroyed",
+        "gravity_shift_clears": "2x multiplier on any lines cleared within 2 seconds of a shift",
+        "combo_multiplier": "See combo_system section"
+      },
+      "difficulty_curve": "Piece pool starts with simpler shapes (3-4 cells); after every 2000 points, larger/more complex shapes are introduced. Nexus Link frequency increases over time.",
+      "leaderboard": true
+    },
+    {
+      "mode_id": "puzzle_challenge",
+      "name": "Puzzle Challenge",
+      "subtitle": "Think. Solve. Master.",
+      "description": "Pre-designed boards with specific block configurations already placed. The player receives a fixed set of pieces and must clear the board (or reach a target) in the minimum number of moves.",
+      "rules": [
+        "Board starts with a pre-set configuration of blocks",
+        "Player receives a fixed, ordered set of pieces (no randomness)",
+        "Goal: clear all highlighted target cells using the fewest placements",
+        "Star rating: 3 stars = minimum moves, 2 stars = minimum+1, 1 star = minimum+2",
+        "Some puzzles require using Gravity Shift (provided as a one-time ability)",
+        "Some puzzles feature locked cells that cannot be covered",
+        "Nexus Links are pre-placed on certain puzzles as key solving mechanics"
+      ],
+      "win_condition": "Clear all target cells with the given pieces",
+      "level_count": "200 puzzles at launch, grouped into 10 chapters of 20",
+      "chapter_themes": [
+        "Chapter 1-2: Basic line clears (tutorial)",
+        "Chapter 3-4: Introduction to Nexus Links",
+        "Chapter 5-6: Gravity Shift puzzles",
+        "Chapter 7-8: Combined mechanics",
+        "Chapter 9-10: Expert multi-step solutions"
+      ],
+      "hints_system": "Players can spend 1 Hint Token to reveal optimal placement for one piece. Hint Tokens earned via daily login or purchased.",
+      "leaderboard": false
+    },
+    {
+      "mode_id": "time_rush",
+      "name": "Time Rush",
+      "subtitle": "60 Seconds of Chaos",
+      "description": "An intense 60-second sprint on an 8x8 grid. Pieces auto-generate rapidly. Score as many points as possible before time expires.",
+      "rules": [
+        "60-second countdown timer",
+        "Pieces appear one at a time (no tray) with rapid 1.5-second auto-skip if not placed",
+        "Skipped pieces cost -50 points",
+        "Clearing lines adds +2 seconds to the timer (max 5 bonus seconds per game)",
+        "Gravity Shift is available once, recharges after clearing 3 lines",
+        "Nexus Links appear more frequently to enable explosive chain reactions",
+        "Board does NOT end the game if full — unplaceable pieces are simply skipped with penalty",
+        "Speed bonus: placing a piece within 0.5 seconds of receiving it grants +25 points"
+      ],
+      "win_condition": "Maximize score within 60 seconds (+ earned bonus time)",
+      "scoring": {
+        "single_line": 120,
+        "double_line": 360,
+        "triple_line": 750,
+        "speed_bonus": 25,
+        "skip_penalty": -50,
+        "nexus_chain_bonus": "+200 per linked block",
+        "combo_multiplier": "See combo_system section"
+      },
+      "leaderboard": true,
+      "daily_challenge": "Each day features a fixed random seed so all players compete on identical piece sequences"
+    }
+  ],
+
+  "pieces": [
+    {
+      "piece_id": "P01",
+      "name": "Spark",
+      "cells": 3,
+      "shape": "L-shaped corner (2x2 with one cell missing)",
+      "grid_layout": [
+        [1, 0],
+        [1, 1]
+      ],
+      "rarity": "common",
+      "nexus_slots": 0
+    },
+    {
+      "piece_id": "P02",
+      "name": "Bolt",
+      "cells": 3,
+      "shape": "Diagonal staircase",
+      "grid_layout": [
+        [1, 0],
+        [0, 1],
+        [0, 1]
+      ],
+      "rarity": "common",
+      "nexus_slots": 0
+    },
+    {
+      "piece_id": "P03",
+      "name": "Anvil",
+      "cells": 4,
+      "shape": "T-shape with extended base",
+      "grid_layout": [
+        [0, 1, 0],
+        [1, 1, 1]
+      ],
+      "rarity": "common",
+      "nexus_slots": 1
+    },
+    {
+      "piece_id": "P04",
+      "name": "Fang",
+      "cells": 4,
+      "shape": "Two parallel vertical pairs offset by one",
+      "grid_layout": [
+        [1, 0],
+        [1, 1],
+        [0, 1]
+      ],
+      "rarity": "common",
+      "nexus_slots": 1
+    },
+    {
+      "piece_id": "P05",
+      "name": "Crown",
+      "cells": 5,
+      "shape": "Three-pointed crown",
+      "grid_layout": [
+        [1, 0, 1],
+        [1, 1, 1]
+      ],
+      "rarity": "uncommon",
+      "nexus_slots": 1
+    },
+    {
+      "piece_id": "P06",
+      "name": "Helix",
+      "cells": 5,
+      "shape": "Spiral/pinwheel shape",
+      "grid_layout": [
+        [1, 1, 0],
+        [0, 1, 0],
+        [0, 1, 1]
+      ],
+      "rarity": "uncommon",
+      "nexus_slots": 2
+    },
+    {
+      "piece_id": "P07",
+      "name": "Bastion",
+      "cells": 5,
+      "shape": "Plus/cross shape",
+      "grid_layout": [
+        [0, 1, 0],
+        [1, 1, 1],
+        [0, 1, 0]
+      ],
+      "rarity": "uncommon",
+      "nexus_slots": 1
+    },
+    {
+      "piece_id": "P08",
+      "name": "Talon",
+      "cells": 4,
+      "shape": "Hook shape — bent arm",
+      "grid_layout": [
+        [1, 1, 1],
+        [0, 0, 1]
+      ],
+      "rarity": "common",
+      "nexus_slots": 1
+    },
+    {
+      "piece_id": "P09",
+      "name": "Monolith",
+      "cells": 5,
+      "shape": "Vertical bar (1x5)",
+      "grid_layout": [
+        [1],
+        [1],
+        [1],
+        [1],
+        [1]
+      ],
+      "rarity": "rare",
+      "nexus_slots": 2
+    },
+    {
+      "piece_id": "P10",
+      "name": "Arch",
+      "cells": 5,
+      "shape": "U-shape / horseshoe",
+      "grid_layout": [
+        [1, 0, 1],
+        [1, 0, 1],
+        [1, 1, 1]
+      ],
+      "note": "This is a 7-cell piece visually but only 5 cells are filled (the U outline)",
+      "rarity": "rare",
+      "nexus_slots": 2
+    },
+    {
+      "piece_id": "P11",
+      "name": "Wraith",
+      "cells": 6,
+      "shape": "Z-extension — large zigzag",
+      "grid_layout": [
+        [1, 1, 0],
+        [0, 1, 0],
+        [0, 1, 1],
+        [0, 0, 1]
+      ],
+      "rarity": "rare",
+      "nexus_slots": 2
+    },
+    {
+      "piece_id": "P12",
+      "name": "Nexus Core",
+      "cells": 4,
+      "shape": "2x2 square with all edges having nexus connectors",
+      "grid_layout": [
+        [1, 1],
+        [1, 1]
+      ],
+      "rarity": "rare",
+      "nexus_slots": 4,
+      "special_property": "All 4 blocks have nexus connectors — guaranteed to link with adjacent nexus pieces. The ultimate chain-reaction catalyst."
+    }
+  ],
+
+  "powerups": [
+    {
+      "powerup_id": "PW01",
+      "name": "Void Pulse",
+      "icon_description": "A dark purple expanding ring",
+      "effect": "Destroys all blocks in a 3x3 area centered on the chosen cell. Does NOT award line-clear points but frees up critical space.",
+      "activation": "Tap to select, then tap target cell on the grid",
+      "earn_method": "Granted after clearing 5 lines without using any power-ups",
+      "max_charges": 2,
+      "cooldown": "Earn-based (no timer)"
+    },
+    {
+      "powerup_id": "PW02",
+      "name": "Chrono Freeze",
+      "icon_description": "A blue crystalline hourglass",
+      "effect": "In Time Rush mode: pauses the timer for 5 seconds. In Classic/Puzzle: allows the player to swap the current piece set for a new random draw (one-time re-roll).",
+      "activation": "Tap the power-up button in the HUD",
+      "earn_method": "Awarded every 10 player levels OR after achieving a 5x combo",
+      "max_charges": 1,
+      "cooldown": "Once per game session"
+    },
+    {
+      "powerup_id": "PW03",
+      "name": "Prism Beam",
+      "icon_description": "A rainbow-colored horizontal laser line",
+      "effect": "Instantly clears one chosen row OR column, awarding full line-clear points. Triggers Nexus Links if any linked blocks are in the cleared line.",
+      "activation": "Tap to select, then swipe along the row or column to clear",
+      "earn_method": "Rare drop from clearing 3+ lines simultaneously",
+      "max_charges": 1,
+      "cooldown": "Earn-based"
+    },
+    {
+      "powerup_id": "PW04",
+      "name": "Gravity Anchor",
+      "icon_description": "A golden downward arrow with weight symbol",
+      "effect": "After placing a piece, all floating blocks (blocks with empty space below them relative to current gravity) instantly fall and settle. Can trigger unexpected line completions. Essentially forces a gravity settle without changing gravity direction.",
+      "activation": "Auto-triggers on placement of the next piece after activation",
+      "earn_method": "Unlocked at player level 8; earned by clearing 4 lines in one placement",
+      "max_charges": 2,
+      "cooldown": "Earn-based"
+    },
+    {
+      "powerup_id": "PW05",
+      "name": "Nexus Overcharge",
+      "icon_description": "A glowing electric-blue chain link icon",
+      "effect": "Temporarily (for the next 3 piece placements) ALL blocks placed gain nexus connectors on every edge. Massively increases chain-reaction potential.",
+      "activation": "Tap to activate; lasts for 3 placements",
+      "earn_method": "Rare reward for triggering a Nexus Link chain of 8+ blocks",
+      "max_charges": 1,
+      "cooldown": "Once per game session"
+    }
+  ],
+
+  "combo_system": {
+    "description": "Combos occur when multiple lines are cleared in rapid succession or through chain reactions triggered by Nexus Links and Gravity Shift.",
+    "combo_types": [
+      {
+        "name": "Multi-Clear",
+        "trigger": "Clear 2+ lines with a single piece placement",
+        "multiplier": "2x for 2 lines, 3x for 3, 5x for 4+",
+        "animation": "Screen flash, pieces shatter with radial particle burst, score numbers scale up with golden glow"
+      },
+      {
+        "name": "Chain Reaction",
+        "trigger": "Nexus Link destruction triggers additional line clears",
+        "multiplier": "Each chain step adds +1.5x to the total (chain 1 = 1.5x, chain 2 = 3x, chain 3 = 4.5x, etc.)",
+        "animation": "Electric arcs travel between linked blocks before they explode; camera slight zoom; bass rumble SFX intensifies with each chain step"
+      },
+      {
+        "name": "Gravity Cascade",
+        "trigger": "After a Gravity Shift, falling blocks complete 1+ lines",
+        "multiplier": "2x base for the first cascade clear, +1x for each additional line",
+        "animation": "Blocks fall with motion blur trails; impact particles on landing; shockwave ring on line clear"
+      },
+      {
+        "name": "Perfect Placement",
+        "trigger": "Place a piece that simultaneously triggers a Multi-Clear AND a Chain Reaction",
+        "multiplier": "All multipliers stack multiplicatively (e.g., 3x Multi-Clear * 1.5x Chain = 4.5x)",
+        "animation": "Full-screen prismatic explosion, controller vibration (mobile haptics), 'PERFECT' text with trailing particles"
+      }
+    ],
+    "streak_system": {
+      "description": "Clearing at least one line on consecutive piece placements builds a streak counter.",
+      "streak_bonus": "+10% score per consecutive clear (caps at +100% at 10-streak)",
+      "streak_break": "Placing a piece without clearing any line resets the streak to 0",
+      "visual_feedback": "Streak counter displayed with fire effect; board border glows increasingly bright with streak level"
+    }
+  },
+
+  "progression": {
+    "xp_system": {
+      "description": "Players earn XP from all game modes. XP accumulates into player levels 1-50.",
+      "xp_sources": {
+        "line_clear": 10,
+        "combo_bonus": 5,
+        "nexus_link_trigger": 15,
+        "gravity_shift_clear": 12,
+        "puzzle_star_earned": 50,
+        "time_rush_completed": 30,
+        "daily_challenge": 100,
+        "first_game_of_day": 50
+      },
+      "level_curve": "Each level requires (level * 100 + 50) XP. Level 1 = 150 XP, Level 50 = 5050 XP. Total XP to max level: ~131,250",
+      "prestige": "After level 50, players can Prestige (reset to level 1) to earn a unique border frame and +5% permanent XP bonus. Up to 3 Prestige tiers."
+    },
+    "level_unlocks": [
+      { "level": 1, "reward": "Classic Endless mode unlocked" },
+      { "level": 3, "reward": "Time Rush mode unlocked" },
+      { "level": 5, "reward": "Puzzle Challenge mode unlocked (Chapter 1)" },
+      { "level": 7, "reward": "Piece skin: 'Neon Glow' set" },
+      { "level": 8, "reward": "Power-up: Gravity Anchor unlocked" },
+      { "level": 10, "reward": "Grid theme: 'Deep Space'" },
+      { "level": 12, "reward": "Piece skin: 'Crystal Ice' set" },
+      { "level": 15, "reward": "Custom avatar frame: 'Bronze Circuit'" },
+      { "level": 18, "reward": "Grid theme: 'Ocean Depths'" },
+      { "level": 20, "reward": "Exclusive piece animation: 'Hologram Shimmer'" },
+      { "level": 22, "reward": "Power-up: Nexus Overcharge unlocked" },
+      { "level": 25, "reward": "Avatar frame: 'Silver Circuit'" },
+      { "level": 28, "reward": "Grid theme: 'Volcano Core'" },
+      { "level": 30, "reward": "Exclusive trail effect: 'Stardust'" },
+      { "level": 33, "reward": "Piece skin: 'Obsidian Shadow' set" },
+      { "level": 35, "reward": "Avatar frame: 'Gold Circuit'" },
+      { "level": 38, "reward": "Grid theme: 'Digital Rain'" },
+      { "level": 40, "reward": "Exclusive clear animation: 'Supernova'" },
+      { "level": 43, "reward": "Piece skin: 'Aurora Borealis' set" },
+      { "level": 45, "reward": "Avatar frame: 'Platinum Circuit'" },
+      { "level": 48, "reward": "Grid theme: 'Nexus Dimension' (animated)" },
+      { "level": 50, "reward": "Title: 'Nexus Master' + exclusive animated avatar border" }
+    ],
+    "daily_rewards": {
+      "day_1": "50 XP",
+      "day_2": "100 Coins",
+      "day_3": "1 Hint Token",
+      "day_4": "150 XP",
+      "day_5": "200 Coins",
+      "day_6": "1 Void Pulse charge",
+      "day_7": "Premium Loot Box (cosmetic only)"
+    },
+    "achievements": [
+      { "name": "First Link", "condition": "Trigger your first Nexus Link", "reward": "50 XP" },
+      { "name": "Chain Master", "condition": "Trigger a 5-step chain reaction", "reward": "200 XP + 'Chain Master' title" },
+      { "name": "Gravity Defier", "condition": "Clear 3 lines with a single Gravity Shift", "reward": "150 XP" },
+      { "name": "Speed Demon", "condition": "Score 5000+ in Time Rush", "reward": "300 XP + 'Speed Demon' title" },
+      { "name": "Puzzle Prodigy", "condition": "3-star all puzzles in a chapter", "reward": "500 XP + exclusive piece skin" },
+      { "name": "Endless Legend", "condition": "Reach 50,000 points in Classic Endless", "reward": "500 XP + animated avatar frame" },
+      { "name": "Perfect Streak", "condition": "Achieve a 10-streak in any mode", "reward": "250 XP + trail effect" },
+      { "name": "Nexus Architect", "condition": "Destroy 50 blocks in a single chain reaction", "reward": "1000 XP + legendary title" }
+    ]
+  },
+
+  "monetization": {
+    "philosophy": "Cosmetic-only monetization. No gameplay advantages for purchase. All power-ups and pieces are earnable through play. Paying players look cooler but never play better.",
+    "currency": {
+      "soft_currency": {
+        "name": "Coins",
+        "earn_methods": ["Gameplay score milestones", "Daily rewards", "Achievements", "Ad watching (optional)"],
+        "spend_on": ["Basic piece skins", "Grid themes", "Hint Tokens"]
+      },
+      "premium_currency": {
+        "name": "Prisms",
+        "earn_methods": ["Real money purchase", "Rare achievement rewards", "Season pass free track"],
+        "spend_on": ["Premium piece skins", "Animated effects", "Avatar frames", "Season pass"]
+      }
+    },
+    "iap_offerings": [
+      { "name": "Starter Pack", "price_usd": 1.99, "contents": "500 Prisms + 3 Hint Tokens + 'Early Adopter' frame", "limit": "Once per account" },
+      { "name": "Prism Pouch", "price_usd": 4.99, "contents": "1200 Prisms" },
+      { "name": "Prism Chest", "price_usd": 9.99, "contents": "2800 Prisms" },
+      { "name": "Prism Vault", "price_usd": 19.99, "contents": "6500 Prisms" },
+      { "name": "No-Ads Pass", "price_usd": 4.99, "contents": "Permanently removes all interstitial ads", "limit": "Once per account" },
+      { "name": "Season Pass", "price_usd": 7.99, "contents": "Premium track with exclusive skins, effects, and bonus Prisms over 30 days", "recurring": "Monthly" }
+    ],
+    "cosmetic_categories": [
+      {
+        "category": "Piece Skins",
+        "description": "Visual reskins for all 12 pieces — changes color, texture, and particle effects",
+        "examples": ["Neon Glow", "Crystal Ice", "Obsidian Shadow", "Aurora Borealis", "Molten Lava", "Digital Glitch"]
+      },
+      {
+        "category": "Grid Themes",
+        "description": "Full board visual overhaul — background, grid lines, cell appearance",
+        "examples": ["Deep Space", "Ocean Depths", "Volcano Core", "Digital Rain", "Sakura Garden", "Nexus Dimension"]
+      },
+      {
+        "category": "Clear Effects",
+        "description": "Custom animations when lines are cleared",
+        "examples": ["Supernova", "Shatter Glass", "Pixel Dissolve", "Lightning Strike"]
+      },
+      {
+        "category": "Trail Effects",
+        "description": "Particle trails when dragging pieces to placement",
+        "examples": ["Stardust", "Ember Sparks", "Frost Crystals", "Neon Streaks"]
+      },
+      {
+        "category": "Avatar Frames",
+        "description": "Borders around player profile picture on leaderboards",
+        "examples": ["Bronze/Silver/Gold/Platinum Circuit", "Animated Fire Ring", "Holographic Border"]
+      },
+      {
+        "category": "Titles",
+        "description": "Text badges displayed under player name",
+        "examples": ["Nexus Master", "Chain Master", "Speed Demon", "Puzzle Prodigy"]
+      }
+    ],
+    "ad_strategy": {
+      "interstitial_ads": "Shown between games (every 3rd game), skippable after 5 seconds. Removed by No-Ads Pass.",
+      "rewarded_ads": "Optional: watch a 30-second ad to earn 50 Coins, 1 Hint Token, or 1 extra Gravity Shift charge. Limited to 5 per day.",
+      "no_forced_ads_during_gameplay": true
+    },
+    "anti_pay_to_win_guarantees": [
+      "Power-ups cannot be purchased directly — only earned through gameplay",
+      "All pieces are available to all players from the start (visual skins only)",
+      "Hint Tokens are earnable through daily rewards and gameplay",
+      "No energy/lives system — unlimited play for all users",
+      "Leaderboards are purely skill-based; no purchased boosts"
+    ]
+  },
+
+  "technical_notes": {
+    "target_fps": 60,
+    "min_spec": "iOS 14+ / Android 8+",
+    "offline_capable": "Classic Endless and Puzzle Challenge playable offline; Time Rush requires connection for daily seed sync and leaderboards",
+    "save_system": "Cloud save via player account; local backup",
+    "accessibility": [
+      "Colorblind mode: distinct shapes/patterns per nexus connector color",
+      "High contrast mode",
+      "Adjustable text size",
+      "One-handed play support",
+      "Haptic feedback toggle"
+    ],
+    "analytics_events": [
+      "game_start", "game_end", "line_clear", "nexus_link_triggered",
+      "gravity_shift_used", "powerup_used", "iap_purchase", "ad_watched",
+      "level_up", "achievement_unlocked", "session_duration"
+    ]
+  },
+
+  "ux_flow": {
+    "main_menu": ["Play (mode select)", "Collection (skins/themes)", "Profile (stats/achievements)", "Shop", "Settings"],
+    "first_time_user_experience": {
+      "step_1": "Animated logo reveal",
+      "step_2": "3-move interactive tutorial: place piece, clear line, see score",
+      "step_3": "Introduction to Nexus Links via guided placement",
+      "step_4": "Free play Classic Endless game",
+      "step_5": "Show progression bar and first reward",
+      "step_6": "Return to main menu with all modes gradually unlocking"
+    },
+    "session_end": {
+      "game_over_screen": "Final score + XP earned + level progress bar + 'Play Again' / 'Share' / 'Home'",
+      "new_high_score": "Celebration animation + leaderboard position + share prompt"
+    }
+  },
+
+  "audio_design": {
+    "music": "Lo-fi electronic ambient tracks; tempo increases with streak level",
+    "sfx_palette": {
+      "piece_place": "Soft click with tonal variation based on piece size",
+      "line_clear": "Satisfying 'whoosh' + chime (pitch rises with combo)",
+      "nexus_link_form": "Electric 'zap' connection sound",
+      "nexus_chain_explode": "Escalating explosion sequence",
+      "gravity_shift": "Deep 'whomp' + settling rattle",
+      "combo_announce": "Triumphant brass hit at 3x+",
+      "game_over": "Gentle descending tone (not punishing)"
+    },
+    "haptics": {
+      "piece_place": "Light tap",
+      "line_clear": "Medium pulse",
+      "chain_reaction": "Escalating vibration pattern",
+      "gravity_shift": "Strong thud"
+    }
+  }
+}

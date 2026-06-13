@@ -1,0 +1,479 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport"
+        content="width=device-width, initial-scale=1.0, maximum-scale=5.0, viewport-fit=cover" />
+
+  <!-- ═══════════════════════════════════════════════════════════════
+       PRIMARY META
+  ═══════════════════════════════════════════════════════════════ -->
+  <title>NEXUS BLOCKS — Master the Grid. Break the Chain.</title>
+  <meta name="description"
+        content="An original block-puzzle game with Nexus Link chain mechanics, gravity shifts, and procedural audio — play free, install offline on iOS &amp; Android." />
+  <meta name="keywords"
+        content="nexus blocks, block puzzle, puzzle game, offline game, PWA game, nexus link, grid game, mobile puzzle" />
+  <meta name="robots"       content="index, follow, max-image-preview:large" />
+  <meta name="author"       content="NEXUS BLOCKS" />
+  <meta name="generator"    content="NEXUS BLOCKS Engine v1" />
+  <meta name="rating"       content="general" />
+  <meta name="color-scheme" content="dark" />
+  <link rel="canonical"     href="https://nexus-blocks.app/" />
+
+  <!-- ═══════════════════════════════════════════════════════════════
+       PWA — manifest + theme
+  ═══════════════════════════════════════════════════════════════ -->
+  <link rel="manifest" href="/manifest.webmanifest" />
+
+  <!-- theme-color: matches --color-primary in styles.css -->
+  <meta name="theme-color"              content="#6600FF"               media="(prefers-color-scheme: dark)" />
+  <meta name="theme-color"              content="#5200CC"               media="(prefers-color-scheme: light)" />
+  <meta name="background-color"         content="#0A0A0F" />
+  <meta name="mobile-web-app-capable"   content="yes" />
+  <meta name="format-detection"         content="telephone=no, date=no, email=no, address=no" />
+
+  <!-- iOS PWA -->
+  <meta name="apple-mobile-web-app-capable"            content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style"   content="black-translucent" />
+  <meta name="apple-mobile-web-app-title"              content="NEXUS" />
+
+  <!-- Windows Tiles -->
+  <meta name="msapplication-TileColor"  content="#6600FF" />
+  <meta name="msapplication-TileImage"  content="/icons/icon-144.png" />
+  <meta name="msapplication-config"     content="none" />
+
+  <!-- ═══════════════════════════════════════════════════════════════
+       FAVICONS & APPLE TOUCH ICONS
+  ═══════════════════════════════════════════════════════════════ -->
+  <link rel="icon"              type="image/svg+xml"   href="/icons/icon.svg" />
+  <link rel="icon"              type="image/png" sizes="32x32"  href="/icons/icon-32.png" />
+  <link rel="icon"              type="image/png" sizes="16x16"  href="/icons/icon-16.png" />
+  <link rel="shortcut icon"     type="image/png" href="/icons/icon-32.png" />
+  <link rel="apple-touch-icon"  sizes="180x180"  href="/icons/icon-180.png" />
+  <link rel="apple-touch-icon"  sizes="152x152"  href="/icons/icon-152.png" />
+  <link rel="apple-touch-icon"  sizes="144x144"  href="/icons/icon-144.png" />
+  <link rel="apple-touch-icon"  sizes="120x120"  href="/icons/icon-128.png" />
+  <link rel="mask-icon"         href="/icons/icon.svg" color="#6600FF" />
+
+  <!-- ═══════════════════════════════════════════════════════════════
+       OPEN GRAPH
+  ═══════════════════════════════════════════════════════════════ -->
+  <meta property="og:type"         content="website" />
+  <meta property="og:site_name"    content="NEXUS BLOCKS" />
+  <meta property="og:title"        content="NEXUS BLOCKS — Drag. Clear. Combo." />
+  <meta property="og:description"  content="A clean, addictive block-puzzle game. Drag pieces onto the 8×8 grid, clear lines and chain combos. Free, offline-ready PWA." />
+  <meta property="og:url"          content="https://nexus-blocks.app/" />
+  <meta property="og:image"        content="https://nexus-blocks.app/icons/og-image.png" />
+  <meta property="og:image:width"  content="1200" />
+  <meta property="og:image:height" content="630" />
+  <meta property="og:image:alt"    content="NEXUS BLOCKS gameplay — electric violet block grid with Nexus Link chains" />
+  <meta property="og:locale"       content="en_US" />
+
+  <!-- ═══════════════════════════════════════════════════════════════
+       TWITTER CARD
+  ═══════════════════════════════════════════════════════════════ -->
+  <meta name="twitter:card"        content="summary_large_image" />
+  <meta name="twitter:site"        content="@NexusBlocksGame" />
+  <meta name="twitter:creator"     content="@NexusBlocksGame" />
+  <meta name="twitter:title"       content="NEXUS BLOCKS" />
+  <meta name="twitter:description" content="Drag pieces, clear lines and columns, chain combos for a high score. Free PWA — install offline on any device." />
+  <meta name="twitter:image"       content="https://nexus-blocks.app/icons/og-image.png" />
+  <meta name="twitter:image:alt"   content="NEXUS BLOCKS — block puzzle game" />
+
+  <!-- ═══════════════════════════════════════════════════════════════
+       PERFORMANCE — Resource hints (preconnect + preload)
+       Font requests use display=swap to prevent FOIT.
+  ═══════════════════════════════════════════════════════════════ -->
+  <!-- Preconnect to external origins -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com"    crossorigin />
+
+  <!-- Preload critical fonts (weight 700 + 900 are used in boot screen) -->
+  <link rel="preload"
+        as="style"
+        href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;700;900&family=Inter:wght@400;500&display=swap"
+        onload="this.onload=null;this.rel='stylesheet'" />
+  <noscript>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;700;900&family=Inter:wght@400;500&display=swap"
+          rel="stylesheet" />
+  </noscript>
+
+  <!-- Preload the first stylesheet (defines --color-primary, --color-bg) -->
+  <link rel="preload" as="style" href="/styles.css" />
+
+  <!-- ═══════════════════════════════════════════════════════════════
+       CRITICAL CSS — inlined for instant first-paint of boot screen.
+       Color values match tokens in styles.css.
+       !! Does NOT redeclare --color-primary or --color-bg !!
+  ═══════════════════════════════════════════════════════════════ -->
+  <style id="critical-css">
+    /* Critical paint path for boot screen — zero external CSS dependency */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    html, body {
+      width: 100%; height: 100%;
+      overflow: hidden;
+      background: #0A0A0F;       /* literal fallback for --color-bg  */
+      -webkit-tap-highlight-color: transparent;
+      touch-action: none;
+      user-select: none;
+    }
+
+    #app {
+      position: relative;
+      width: 100%; height: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    /* Screens — hidden by default, active class shows them */
+    .screen {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.3s ease;
+    }
+    .screen.active {
+      opacity: 1;
+      pointer-events: all;
+    }
+
+    /* Boot screen */
+    .boot-logo {
+      text-align: center;
+    }
+    .boot-logo h1 {
+      font-family: 'Outfit', system-ui, sans-serif;
+      font-size: clamp(2rem, 9vw, 4rem);
+      font-weight: 900;
+      letter-spacing: .12em;
+      text-transform: uppercase;
+      color: #F4F4F6;
+      text-shadow: 0 0 32px #6600FF, 0 0 64px rgba(102,0,255,.4);
+                          /* ↑ matches --color-primary */
+    }
+    .boot-tagline {
+      margin-top: 10px;
+      font-family: 'Outfit', system-ui, sans-serif;
+      font-size: .72rem;
+      letter-spacing: .24em;
+      text-transform: uppercase;
+      color: #8E8E9F;
+      animation: _bootBlink 1.2s ease-in-out infinite;
+    }
+    @keyframes _bootBlink {
+      0%,100% { opacity: .9; }
+      50%      { opacity: .35; }
+    }
+
+    /* bg-canvas layer */
+    #bg-canvas {
+      position: fixed; inset: 0;
+      z-index: 0;
+      pointer-events: none;
+      opacity: .35;
+    }
+
+    /* particle layer */
+    #particle-layer {
+      position: fixed; inset: 0;
+      z-index: 40;
+      pointer-events: none;
+    }
+
+    /* font-display: swap hint for the custom font */
+    @font-face {
+      font-family: 'Outfit';
+      font-display: swap;
+      src: local('Outfit');
+    }
+
+    /* Reduced-motion: disable all transitions globally */
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after {
+        animation-duration:   0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration:  0.01ms !important;
+      }
+    }
+
+    /* High-contrast: boost border visibility */
+    @media (prefers-contrast: high) {
+      .screen { outline: 2px solid #fff; }
+    }
+  </style>
+
+  <!-- ═══════════════════════════════════════════════════════════════
+       FULL STYLESHEETS (after critical CSS paint)
+       Load order must remain: styles.css → nexus_visuals.css → game.css
+  ═══════════════════════════════════════════════════════════════ -->
+  <link rel="stylesheet" href="/styles.css" />
+  <link rel="stylesheet" href="/nexus_visuals.css" />
+  <link rel="stylesheet" href="/game.css" />
+
+  <!-- ═══════════════════════════════════════════════════════════════
+       JSON-LD STRUCTURED DATA — VideoGame schema
+  ═══════════════════════════════════════════════════════════════ -->
+  <script type="application/ld+json">
+  {
+    "@context":        "https://schema.org",
+    "@type":           "VideoGame",
+    "name":            "NEXUS BLOCKS",
+    "alternateName":   "Nexus Blocks",
+    "description":     "An original block-puzzle browser game with Nexus Link chain mechanics, gravity shifts, three distinct game modes, and procedural audio synthesis. Fully offline-capable as a Progressive Web App.",
+    "url":             "https://nexus-blocks.app/",
+    "image":           "https://nexus-blocks.app/icons/og-image.png",
+    "screenshot": [
+      "https://nexus-blocks.app/icons/screenshot-mobile-1.png",
+      "https://nexus-blocks.app/icons/screenshot-desktop.png"
+    ],
+    "genre":           ["Puzzle", "Casual", "Arcade"],
+    "gamePlatform":    ["Web Browser", "Progressive Web App", "iOS", "Android"],
+    "operatingSystem": "Any modern browser",
+    "applicationCategory": "Game",
+    "offers": {
+      "@type":        "Offer",
+      "price":        "0",
+      "priceCurrency":"USD",
+      "availability": "https://schema.org/InStock"
+    },
+    "author": {
+      "@type": "Organization",
+      "name":  "NEXUS BLOCKS"
+    },
+    "numberOfPlayers": {
+      "@type":    "QuantitativeValue",
+      "minValue": 1,
+      "maxValue": 1
+    },
+    "gameMode": ["SinglePlayer"],
+    "inLanguage":  "en",
+    "datePublished": "2025-05-17",
+    "sameAs": [
+      "https://nexus-blocks.app/"
+    ]
+  }
+  </script>
+</head>
+<body>
+  <!-- ═══════════════════════════════════════════════════════════════════════
+       DOM LAYER STACK (back to front)
+       bg-canvas      z:0   — animated hex-mesh background (Canvas 2D)
+       #app           z:1   — all screens and overlays
+       #particle-layer z:40 — DOM particles spawned by NexusVisualManager
+  ════════════════════════════════════════════════════════════════════════ -->
+
+  <canvas id="bg-canvas" aria-hidden="true"></canvas>
+
+  <div id="app">
+
+    <!-- ── BOOT SCREEN ────────────────────────────────────────────────── -->
+    <div id="screen-boot" class="screen active" role="status" aria-live="polite">
+      <div class="boot-logo">
+        <h1>NEXUS BLOCKS</h1>
+        <p class="boot-tagline">Loading&hellip;</p>
+      </div>
+    </div>
+
+    <!-- ── MAIN MENU ──────────────────────────────────────────────────── -->
+    <div id="screen-menu" class="screen" role="main">
+
+      <!-- CSS-animated particle field (JS populates dots, CSS drives them) -->
+      <div class="menu-particles" aria-hidden="true"></div>
+
+      <!-- Logo with shimmer animation -->
+      <header class="menu-header" style="position:relative;z-index:1;text-align:center;">
+        <div class="logo-anim-wrap">
+          <h1 class="menu-title">
+            <span class="logo-line-1">NEXUS</span>
+            <span class="logo-line-2">BLOCKS</span>
+          </h1>
+          <span class="logo-shimmer-bar" aria-hidden="true"></span>
+        </div>
+        <p class="menu-subtitle">Master the Grid. Break the Chain.</p>
+      </header>
+
+      <!-- Best score with count-up animation -->
+      <div class="menu-best-score" aria-label="Best score">
+        <span class="menu-best-score__label">Best Score</span>
+        <span class="menu-best-score__value" id="best-score-counter">0</span>
+      </div>
+
+      <!-- Play button -->
+      <nav class="menu-modes" aria-label="Play">
+        <button class="btn-primary menu-mode-btn menu-mode-btn--featured" id="btn-play">
+          <span class="menu-mode-btn__icon">&#9632;</span>
+          <span class="menu-mode-btn__name">Play</span>
+          <span class="menu-mode-btn__sub">Tap. Drag. Clear.</span>
+        </button>
+      </nav>
+
+      <!-- High-score row -->
+      <div class="menu-highscores" aria-label="High score" style="position:relative;z-index:1;">
+        <p>Best: <span id="hs-classic">0</span></p>
+      </div>
+
+      <!-- Settings gear button (fixed, visible on menu + game) -->
+      <button class="settings-gear-btn" id="btn-settings-open" aria-label="Open settings" aria-expanded="false" aria-controls="settings-panel">
+        <!-- Gear SVG -->
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <circle cx="12" cy="12" r="3"/>
+          <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/>
+        </svg>
+      </button>
+
+      <!-- Settings panel (slide in from right) -->
+      <aside id="settings-panel" class="settings-panel" role="dialog" aria-modal="false" aria-label="Settings" aria-hidden="true">
+        <div class="settings-panel__header">
+          <span class="settings-panel__title">Settings</span>
+          <button class="settings-close-btn" id="btn-settings-close" aria-label="Close settings">&#215;</button>
+        </div>
+        <div class="settings-panel__body">
+          <label class="setting-row">
+            <span class="setting-row__label">Sound</span>
+            <div class="toggle-wrap">
+              <input type="checkbox" id="setting-sfx" checked />
+              <div class="toggle-track"><div class="toggle-thumb"></div></div>
+            </div>
+          </label>
+        </div>
+      </aside>
+      <div class="settings-backdrop" id="settings-backdrop" aria-hidden="true"></div>
+
+    </div><!-- #screen-menu -->
+
+    <!-- ── GAME SCREEN ────────────────────────────────────────────────── -->
+    <div id="screen-game" class="screen" role="main">
+
+      <!-- HUD top bar -->
+      <div id="hud">
+        <!-- Score -->
+        <div class="hud-score" aria-label="Score" aria-live="polite">0</div>
+
+        <!-- Personal best -->
+        <div class="hud-high-score" aria-label="High score">0</div>
+
+        <!-- Streak / combo indicator (inside HUD bar) -->
+        <div class="hud-streak" aria-live="polite" aria-atomic="true"></div>
+
+        <!-- Push remaining items to the right -->
+        <div class="hud-spacer"></div>
+
+        <!-- Combo popup (floats above board, anchored to HUD) -->
+        <div class="hud-combo-popup" id="hud-combo-popup" aria-live="assertive" aria-atomic="true"></div>
+
+        <!-- Pause button with keyboard shortcut hint -->
+        <button class="btn-primary hud-pause-btn" id="btn-pause" aria-label="Pause game (P)">
+          <span aria-hidden="true">&#9646;&#9646;</span>
+          <span class="hud-pause-kbd">P</span>
+        </button>
+      </div><!-- #hud -->
+
+      <!-- Game area: single canvas draws the 8×8 board AND the 3-piece tray -->
+      <div class="game-area-wrap">
+        <div class="game-board-wrap" id="game-board-wrap">
+          <canvas id="game-canvas" aria-label="Game board and piece tray"></canvas>
+        </div>
+      </div><!-- .game-area-wrap -->
+
+    </div><!-- #screen-game -->
+
+    <!-- ── PAUSE OVERLAY ──────────────────────────────────────────────── -->
+    <div id="overlay-pause" class="screen modal-overlay" role="dialog" aria-modal="true" aria-label="Game paused">
+      <div class="overlay-card">
+        <h2>PAUSED</h2>
+        <button class="btn-primary" id="btn-resume">Resume</button>
+        <button class="btn-primary" id="btn-restart">Restart</button>
+        <button class="btn-primary" id="btn-menu-from-pause">Main Menu</button>
+      </div>
+    </div>
+
+    <!-- ── GAME OVER OVERLAY ──────────────────────────────────────────── -->
+    <div id="overlay-game-over" class="screen modal-overlay" role="dialog" aria-modal="true" aria-label="Game over">
+      <div class="overlay-card">
+        <h2>GAME OVER</h2>
+        <p class="overlay-score-label">Score</p>
+        <p class="overlay-score-value" id="go-score">0</p>
+        <button class="btn-primary" id="btn-see-results">See Results</button>
+      </div>
+    </div>
+
+    <!-- ── RESULTS SCREEN ─────────────────────────────────────────────── -->
+    <div id="screen-results" class="screen" role="main">
+
+      <h2 class="results-title">GAME OVER</h2>
+
+      <!-- New record starburst (hidden until confirmed by JS) -->
+      <div class="results-record-burst" id="res-record-burst" hidden aria-hidden="true">
+        <div class="starburst-rays" aria-hidden="true"></div>
+        <span class="results-record-text">NEW RECORD!</span>
+      </div>
+
+      <!-- Keep the plain badge too (existing logic toggles it) -->
+      <div class="results-new-record" id="res-new-record" hidden aria-live="assertive">NEW RECORD!</div>
+
+      <!-- Final score (large) -->
+      <div class="results-final-score">
+        <span class="results-final-score__label">Final Score</span>
+        <span class="results-final-score__value" id="res-score">0</span>
+      </div>
+
+      <!-- Score breakdown table -->
+      <div class="results-breakdown" role="table" aria-label="Score breakdown">
+        <div class="results-breakdown__row" role="row">
+          <span class="results-breakdown__label" role="cell">Lines Cleared</span>
+          <span class="results-breakdown__value" role="cell" id="res-lines">0</span>
+        </div>
+        <div class="results-breakdown__row" role="row">
+          <span class="results-breakdown__label" role="cell">Best Combo</span>
+          <span class="results-breakdown__value" role="cell" id="res-best-combo">0&times;</span>
+        </div>
+        <div class="results-breakdown__row" role="row">
+          <span class="results-breakdown__label" role="cell">Time Played</span>
+          <span class="results-breakdown__value" role="cell" id="res-time">0:00</span>
+        </div>
+        <div class="results-breakdown__row" role="row">
+          <span class="results-breakdown__label" role="cell">Level Reached</span>
+          <span class="results-breakdown__value" role="cell" id="res-level">1</span>
+        </div>
+        <div class="results-breakdown__row" role="row">
+          <span class="results-breakdown__label" role="cell">High Score</span>
+          <span class="results-breakdown__value" role="cell" id="res-high-score">0</span>
+        </div>
+      </div>
+
+      <!-- Share button -->
+      <button class="btn-primary btn-share" id="btn-share">
+        Share Score
+      </button>
+
+      <!-- Retry / Menu with staggered entrance -->
+      <nav>
+        <button class="btn-primary" id="btn-play-again">Play Again</button>
+        <button class="btn-primary" id="btn-menu-from-results">Main Menu</button>
+      </nav>
+
+    </div><!-- #screen-results -->
+
+  </div><!-- #app -->
+
+  <!-- Particle layer must be OUTSIDE #app so it overlays all screens -->
+  <div id="particle-layer" aria-hidden="true"></div>
+
+  <!-- ═══════════════════════════════════════════════════════════════════════
+       GAME CORE
+       Self-contained Block-Blast engine — board, tray, drag & drop, clears,
+       scoring, game-over. Replaces the old multi-file src/ graph.
+  ════════════════════════════════════════════════════════════════════════ -->
+  <script src="blockblast.js" defer></script>
+
+
+  <!-- PWA: Service Worker registration + install prompt (must be last) -->
+  <script src="install-prompt.js" defer></script>
+</body>
+</html>
